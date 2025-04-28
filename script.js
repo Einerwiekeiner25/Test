@@ -1,10 +1,10 @@
 //notizen anzeigen lassen
 let notes = ['Notiz 1', 'Notiz 2', 'Notiz 3'];
 let trashNotes = [];
+let archivNotes = [];
 
 function renderNotes() {
     localStorage.setItem("lastname", "test");
-    getFromLocalStorage();
     let contentRef = document.getElementById('content');
     contentRef.innerHTML = "";
     
@@ -22,12 +22,26 @@ function renderTrashNotes() {
     }
 }
 
+function renderArchivNotes() {
+    let archivContentRef = document.getElementById('archiv_content');
+    archivContentRef.innerHTML = "";
+
+    for (let indexArchivNote = 0; indexArchivNote < archivNotes.length; indexArchivNote++) {
+        archivContentRef.innerHTML += getArchivNotTemplate(indexArchivNote);
+    }
+}
+
+
 function getNotTemplate(indexNote) {
     return `<p> + ${notes[indexNote]} <button onclick="deleteNote(${indexNote})"> X</button> </p>`    
 }
 
 function getTrashNotTemplate(indexTrashNote) {
     return `<p> + ${trashNotes[indexTrashNote]} <button onclick="deleteTrashNote(${indexTrashNote})"> X</button> </p>`    
+}
+
+function getArchivNotTemplate(indexArchivNote) {
+    return `<p> + ${archivNotes[indexArchivNote]} <button onclick="deleteArchivNote(${indexArchivNote})"> X</button> </p>`    
 }
 
 // notizen hinzufügen
@@ -50,18 +64,37 @@ document.getElementById('note_input').addEventListener('keydown', function(event
 });
 
 function deleteNote(indexNote) {
-
     let trashNote = notes.splice(indexNote, 1);
     trashNotes.push(trashNote);
     renderNotes();
     renderTrashNotes();
 }
 
-//notizen löschen
 function deleteTrashNote(indexTrashNote) {
-    trashNotes.splice(indexTrashNote, 1);
-    renderTrashNotes();
+    let archivNote = trashNotes.splice(indexTrashNote, 1)[0];
+    archivNotes.push(archivNote); 
+    renderTrashNotes(); 
+    renderArchivNotes();    
 }
+
+function deleteArchivNote(indexArchivNote) {
+    archivNotes.splice(indexArchivNote, 1);
+    renderArchivNotes();
+}
+
+//notizen archivi
+
+
+
+
+
+
+
+
+
+
+
+
 
 function saveToLocalStorage() {
     localStorage.setItem("myData", JSON.stringify(notes));
@@ -76,7 +109,7 @@ function saveData() {
 
     saveToLocalStorage();
 
-    render();
+    renderNotes();
     inputRef.value = "";
 }
 
